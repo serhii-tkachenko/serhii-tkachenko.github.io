@@ -13,7 +13,7 @@
     <div id="paypalcommerce"></div>
 
     <script async>
-        function injectCheckoutKitLoader() {
+        function injectCheckoutKitLoader(env) {
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.defer = true;
@@ -22,25 +22,14 @@
             document.body.append(script);
         }
 
-        function getCheckoutKitLoaderOrThrow(env) {
+        function loadCheckoutKitLoader(env) {
             if (!window.checkoutKitLoader) {
-                injectCheckoutKitLoader();
+                injectCheckoutKitLoader(env);
             }
-
-            // Info: if the script failed to load, then throw an error
-            if (!window.checkoutKitLoader) {
-                var error = new Error('Unable to initialize the checkout button because the required script has not been loaded yet.');
-
-                error.type = 'SCRIPT_NOT_LOADED';
-
-                throw error;
-            }
-
-            return window.checkoutKitLoader;
         }
 
         function initWalletButton(props) {
-            const { env, host, initializeButtonOptions } = props;
+            const { host, initializeButtonOptions } = props;
 
             if (!initializeButtonOptions) {
                 console.error(`'initializeButtonOptions' is required for button initialization`)
@@ -49,9 +38,7 @@
             }
 
             if (!window.checkoutButtonInitializer) {
-                const checkoutKitLoader = getCheckoutKitLoaderOrThrow(env);
-
-                checkoutKitLoader.load('checkout-button')
+                window.checkoutKitLoader.load('checkout-button')
                     .then(function (module) {
                         window.checkoutButtonInitializer = module.createCheckoutButtonInitializer({ host: host });
                         window.checkoutButtonInitializer.initializeButton(initializeButtonOptions);
@@ -67,9 +54,11 @@
          *
          */
         function initPayPalWalletButton(env, host) {
-            const paypalWalletButtonOptions = getPayPalWalletButtonOptions(host);
-
-            initWalletButton(env, host, paypalWalletButtonOptions);
+            initWalletButton({
+                env: env,
+                host: host,
+                initializeButtonOptions: getPayPalWalletButtonOptions(host),
+            });
         }
 
         function getPayPalWalletButtonOptions(host) {
@@ -86,6 +75,14 @@
                 },
             }
         }
+
+        /**
+         *
+         * What to do?
+         * 1. run loadCheckoutKitLoader(env) in the console
+         * 2. then run initPayPalWalletButton(env. host) in the console
+         *
+         * */
     </script>
 </body>
 </html>

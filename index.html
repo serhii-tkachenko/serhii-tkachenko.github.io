@@ -8,6 +8,84 @@
     <title>Checkout sdk headless store</title>
 </head>
 <body>
-    <div>Hello world!</div>
+
+    <div>Here should be a paypal button:</div>
+    <div id="paypalcommerce"></div>
+
+    <script async>
+        function injectCheckoutKitLoader() {
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.defer = true;
+            script.src = `https://checkout-sdk.${env}.zone/v1/loader.js`;
+
+            document.body.append(script);
+        }
+
+        function getCheckoutKitLoaderOrThrow(env) {
+            if (!window.checkoutKitLoader) {
+                injectCheckoutKitLoader();
+            }
+
+            // Info: if the script failed to load, then throw an error
+            if (!window.checkoutKitLoader) {
+                var error = new Error('Unable to initialize the checkout button because the required script has not been loaded yet.');
+
+                error.type = 'SCRIPT_NOT_LOADED';
+
+                throw error;
+            }
+
+            return window.checkoutKitLoader;
+        }
+
+        function initWalletButton(props) {
+            const { env, host, initializeButtonOptions } = props;
+
+            if (!initializeButtonOptions) {
+                console.error(`'initializeButtonOptions' is required for button initialization`)
+
+                return;
+            }
+
+            if (!window.checkoutButtonInitializer) {
+                const checkoutKitLoader = getCheckoutKitLoaderOrThrow(env);
+
+                checkoutKitLoader.load('checkout-button')
+                    .then(function (module) {
+                        window.checkoutButtonInitializer = module.createCheckoutButtonInitializer({ host: host });
+                        window.checkoutButtonInitializer.initializeButton(initializeButtonOptions);
+                    });
+            } else {
+                window.checkoutButtonInitializer.initializeButton(initializeButtonOptions)
+            }
+        }
+
+        /**
+         *
+         * Only for demo purposes
+         *
+         */
+        function initPayPalWalletButton(env, host) {
+            const paypalWalletButtonOptions = getPayPalWalletButtonOptions(host);
+
+            initWalletButton(env, host, paypalWalletButtonOptions);
+        }
+
+        function getPayPalWalletButtonOptions(host) {
+            return {
+                methodId: 'paypalcommerce',
+                containerId: 'paypalcommerce',
+                paypalcommerce: {
+                    style: {"color":"gold","label":"checkout"},
+                    onComplete: () => {
+                        const url = `${host}/checkout/order-confirmation`;
+                        location.replace(url);
+                        return new Promise();
+                    },
+                },
+            }
+        }
+    </script>
 </body>
 </html>

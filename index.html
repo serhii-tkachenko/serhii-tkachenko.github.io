@@ -17,7 +17,7 @@
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.defer = true;
-            script.src = `https://checkout-sdk.${env}.zone/v1/loader.js`;
+            script.src = `https://checkout-sdk.${env}/v1/loader.js`; // env example integration.zone
 
             document.body.append(script);
         }
@@ -80,7 +80,7 @@
          *
          * What to do?
          * 1. run loadCheckoutKitLoader(env) in the console
-         * 2. then run initPayPalWalletButton(env. host) in the console
+         * 2. then run initPayPalWalletButton(env, host) in the console
          *
          * */
     </script>

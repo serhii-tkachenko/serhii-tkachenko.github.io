@@ -8,27 +8,39 @@
     <title>Checkout sdk headless store</title>
 </head>
 <body>
+    <h1>Input data</h1>
+    <div>
+        <label for="storefront-host-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
+        <input id="storefront-host-url" type="text" />
+    </div>
+
+    <button id="render-paypal-button" onClick="() => onRenderPayPalButtonClick()">Render PayPal Button</button>
 
     <div>Here should be a paypal button:</div>
     <div id="paypalcommerce"></div>
 
     <script async>
-        function injectCheckoutKitLoader(env) {
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.defer = true;
-            script.src = `https://checkout-sdk.${env}/v1/loader.js`; // env example integration.zone
+        function injectCheckoutKitLoader() {
+            return new Promise((resolve) => {
+                const envDomain = 'store.bcdev';
 
-            document.body.append(script);
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.defer = true;
+                script.src = `https://checkout-sdk.${envDomain}/v1/loader.js`; // env example integration.zone
+                script.onload = resolve;
+
+                document.body.append(script);
+            })
         }
 
-        function loadCheckoutKitLoader(env) {
+        function loadCheckoutKitLoader() {
             if (!window.checkoutKitLoader) {
-                injectCheckoutKitLoader(env);
+                injectCheckoutKitLoader();
             }
         }
 
-        function initWalletButton(props) {
+        async function initWalletButton(props) {
             const { host, initializeButtonOptions } = props;
 
             if (!initializeButtonOptions) {
@@ -36,6 +48,8 @@
 
                 return;
             }
+
+            loadCheckoutKitLoader();
 
             if (!window.checkoutButtonInitializer) {
                 window.checkoutKitLoader.load('checkout-button')
@@ -53,9 +67,8 @@
          * Only for demo purposes
          *
          */
-        function initPayPalWalletButton(env, host) {
+        function initPayPalWalletButton(host) {
             initWalletButton({
-                env: env,
                 host: host,
                 initializeButtonOptions: getPayPalWalletButtonOptions(host),
             });
@@ -76,13 +89,17 @@
             }
         }
 
-        /**
-         *
-         * What to do?
-         * 1. run loadCheckoutKitLoader(env) in the console
-         * 2. then run initPayPalWalletButton(env, host) in the console
-         *
-         * */
+        function onRenderPayPalButtonClick() {
+            const storefrontHostUrl = document.getElementById('storefront-host-url').value;
+
+            if (!storefrontHostUrl) {
+                console.error('Can\'t render PayPal button because storefront host url is not provided');
+
+                return;
+            }
+
+            initPayPalWalletButton(storefrontHostUrl);
+        }
     </script>
 </body>
 </html>

@@ -9,34 +9,54 @@
 </head>
 <body>
     <h1>Input data</h1>
-    <div>
+    <div style="">
         <label for="storefront-host-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
-        <input id="storefront-host-url" type="text" />
+        <br/>
+        <input
+            id="storefront-host-url"
+            type="text"
+            value="https://my-dev-store-165941143.store.bcdev/"
+            style="width: 700px"
+        />
+    </div>
+    <div style="padding: 20px 0">
+        <label for="checkout-kit-src">Checkout kit src (example: https://checkout-sdk.store.bcdev/v1/loader.js): </label>
+        <br/>
+        <input
+            id="checkout-kit-src"
+            type="text"
+            value="https://checkout-sdk.store.bcdev/v1/loader.js"
+            style="width: 700px"
+        />
     </div>
 
-    <button id="render-paypal-button" onClick="() => onRenderPayPalButtonClick()">Render PayPal Button</button>
+    <button id="render-paypal-button">Render PayPal Button</button>
 
-    <div>Here should be a paypal button:</div>
+    <div style="margin-top: 40px">Here should be a paypal button:</div>
     <div id="paypalcommerce"></div>
 
     <script async>
-        function injectCheckoutKitLoader() {
+        async function injectCheckoutKitLoader() {
             return new Promise((resolve) => {
-                const envDomain = 'store.bcdev';
+                const checkoutKitSrc = document.getElementById('checkout-kit-src').value;
+
+                if (!checkoutKitSrc) {
+                    console.error('Can\'t render PayPal button because checkout kit src is not provided');
+                }
 
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.defer = true;
-                script.src = `https://checkout-sdk.${envDomain}/v1/loader.js`; // env example integration.zone
+                script.src = checkoutKitSrc;
                 script.onload = resolve;
 
                 document.body.append(script);
             })
         }
 
-        function loadCheckoutKitLoader() {
+        async function loadCheckoutKitLoader() {
             if (!window.checkoutKitLoader) {
-                injectCheckoutKitLoader();
+                await injectCheckoutKitLoader();
             }
         }
 
@@ -49,7 +69,7 @@
                 return;
             }
 
-            loadCheckoutKitLoader();
+            await loadCheckoutKitLoader();
 
             if (!window.checkoutButtonInitializer) {
                 window.checkoutKitLoader.load('checkout-button')
@@ -90,6 +110,7 @@
         }
 
         function onRenderPayPalButtonClick() {
+
             const storefrontHostUrl = document.getElementById('storefront-host-url').value;
 
             if (!storefrontHostUrl) {
@@ -100,6 +121,9 @@
 
             initPayPalWalletButton(storefrontHostUrl);
         }
+
+        const button = document.getElementById('render-paypal-button');
+        button.addEventListener('click', onRenderPayPalButtonClick);
     </script>
 </body>
 </html>

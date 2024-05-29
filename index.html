@@ -8,122 +8,122 @@
     <title>Checkout sdk headless store</title>
 </head>
 <body>
-    <h1>Input data</h1>
-    <div style="">
-        <label for="storefront-host-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
-        <br/>
-        <input
-            id="storefront-host-url"
-            type="text"
-            value="https://my-dev-store-165941143.store.bcdev/"
-            style="width: 700px"
-        />
-    </div>
-    <div style="padding: 20px 0">
-        <label for="checkout-kit-src">Checkout kit src (example: https://checkout-sdk.integration.zone/v1/loader.js): </label>
-        <br/>
-        <input
-            id="checkout-kit-src"
-            type="text"
-            value="https://checkout-sdk.integration.zone/v1/loader.js"
-            style="width: 700px"
-        />
-    </div>
+    <div>
+        <h1>Input data</h1>
+        <div style="">
+            <label for="storefront-host-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
+            <br/>
+            <input
+                    id="storefront-host-url"
+                    type="text"
+                    value="https://my-dev-store-165941143.store.bcdev/"
+                    style="width: 700px"
+            />
+        </div>
+        <div style="padding: 20px 0">
+            <label for="checkout-kit-src">Checkout kit src (example: https://checkout-sdk.integration.zone/v1/loader.js): </label>
+            <br/>
+            <input
+                    id="checkout-kit-src"
+                    type="text"
+                    value="https://checkout-sdk.integration.zone/v1/loader.js"
+                    style="width: 700px"
+            />
+        </div>
 
-    <button id="render-paypal-button">Render PayPal Button</button>
+        <button id="render-paypal-button">Render PayPal Button</button>
 
-    <div style="margin-top: 40px">Here should be a paypal button:</div>
-    <div id="paypalcommerce"></div>
+        <div style="margin-top: 40px">Here should be a paypal button:</div>
+        <div id="paypalcommerce"></div>
 
-    <script async>
-        async function injectCheckoutKitLoader() {
-            return new Promise((resolve) => {
-                const checkoutKitSrc = document.getElementById('checkout-kit-src').value;
+        <script async>
+            async function loadCheckoutKitLoader() {
+                if (!window.checkoutKitLoader) {
+                    return new Promise((resolve) => {
+                        const checkoutKitSrc = document.getElementById('checkout-kit-src').value;
 
-                if (!checkoutKitSrc) {
-                    console.error('Can\'t render PayPal button because checkout kit src is not provided');
+                        if (!checkoutKitSrc) {
+                            console.error('Can\'t render PayPal button because checkout kit src is not provided');
+                        }
+
+                        const script = document.createElement('script');
+                        script.type = 'text/javascript';
+                        script.defer = true;
+                        script.src = checkoutKitSrc;
+                        script.onload = resolve;
+
+                        document.body.append(script);
+                    });
                 }
 
-                const script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.defer = true;
-                script.src = checkoutKitSrc;
-                script.onload = resolve;
-
-                document.body.append(script);
-            })
-        }
-
-        async function loadCheckoutKitLoader() {
-            if (!window.checkoutKitLoader) {
-                await injectCheckoutKitLoader();
-            }
-        }
-
-        async function initWalletButton(props) {
-            const { host, initializeButtonOptions } = props;
-
-            if (!initializeButtonOptions) {
-                console.error(`'initializeButtonOptions' is required for button initialization`)
-
-                return;
+                return window.checkoutKitLoader;
             }
 
-            await loadCheckoutKitLoader();
+            async function initWalletButton(props) {
+                const { host, initializeButtonOptions } = props;
 
-            if (!window.checkoutButtonInitializer) {
-                window.checkoutKitLoader.load('checkout-button')
-                    .then(function (module) {
-                        window.checkoutButtonInitializer = module.createCheckoutButtonInitializer({ host: host });
-                        window.checkoutButtonInitializer.initializeButton(initializeButtonOptions);
-                    });
-            } else {
-                window.checkoutButtonInitializer.initializeButton(initializeButtonOptions)
+                if (!initializeButtonOptions) {
+                    console.error(`'initializeButtonOptions' is required for button initialization`)
+
+                    return;
+                }
+
+                await loadCheckoutKitLoader();
+
+                if (!window.checkoutButtonInitializer) {
+                    window.checkoutKitLoader.load('checkout-button')
+                        .then(function (module) {
+                            window.checkoutButtonInitializer = module.createCheckoutButtonInitializer({ host: host });
+                            window.checkoutButtonInitializer.initializeButton(initializeButtonOptions);
+                        });
+                } else {
+                    window.checkoutButtonInitializer.initializeButton(initializeButtonOptions)
+                }
             }
-        }
 
-        /**
-         *
-         * Only for demo purposes
-         *
-         */
-        function initPayPalWalletButton(host) {
-            initWalletButton({
-                host: host,
-                initializeButtonOptions: getPayPalWalletButtonOptions(host),
-            });
-        }
+            /**
+             *
+             * Only for demo purposes
+             *
+             */
+            function initPayPalWalletButton(host) {
+                initWalletButton({
+                    host: host,
+                    initializeButtonOptions: getPayPalWalletButtonOptions(host),
+                });
+            }
 
-        function getPayPalWalletButtonOptions(host) {
-            return {
-                methodId: 'paypalcommerce',
-                containerId: 'paypalcommerce',
-                paypalcommerce: {
-                    style: {"color":"gold","label":"checkout"},
-                    onComplete: () => {
-                        const url = `${host}/checkout/order-confirmation`;
-                        location.replace(url);
-                        return new Promise();
+            function getPayPalWalletButtonOptions(host) {
+                return {
+                    methodId: 'paypalcommerce',
+                    containerId: 'paypalcommerce',
+                    paypalcommerce: {
+                        style: {"color":"gold","label":"checkout"},
+                        onComplete: () => {
+                            const url = `${host}/checkout/order-confirmation`;
+                            location.replace(url);
+                            return new Promise();
+                        },
                     },
-                },
-            }
-        }
-
-        function onRenderPayPalButtonClick() {
-
-            const storefrontHostUrl = document.getElementById('storefront-host-url').value;
-
-            if (!storefrontHostUrl) {
-                console.error('Can\'t render PayPal button because storefront host url is not provided');
-
-                return;
+                }
             }
 
-            initPayPalWalletButton(storefrontHostUrl);
-        }
+            function onRenderPayPalButtonClick() {
 
-        const button = document.getElementById('render-paypal-button');
-        button.addEventListener('click', onRenderPayPalButtonClick);
-    </script>
+                const storefrontHostUrl = document.getElementById('storefront-host-url').value;
+
+                if (!storefrontHostUrl) {
+                    console.error('Can\'t render PayPal button because storefront host url is not provided');
+
+                    return;
+                }
+
+                initPayPalWalletButton(storefrontHostUrl);
+            }
+
+            const button = document.getElementById('render-paypal-button');
+            button.addEventListener('click', onRenderPayPalButtonClick);
+        </script>
+    </div>
 </body>
 </html>

@@ -22,7 +22,7 @@ const renderWalletButtonsProps = [
     },
 ];
 
-renderWalletButtons(renderWalletButtonsProps);
+// renderWalletButtons(renderWalletButtonsProps);
 
 
 /**

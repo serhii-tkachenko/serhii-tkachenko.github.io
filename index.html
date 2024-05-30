@@ -22,10 +22,10 @@
             </select>
         </div>
         <div style="padding-bottom: 20px">
-            <label for="storefront-host-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
+            <label for="bc-store-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
             <br/>
             <input
-                id="storefront-host-url"
+                id="bc-store-url"
                 type="text"
                 value="https://my-dev-store-165941143.store.bcdev/"
                 style="width: 700px"
@@ -38,11 +38,76 @@
         <div id="paypalcommerce-button"></div>
 
         <script async>
-            function onRenderPayPalButtonClick() {
-                const bcStoreUrl = document.getElementById('storefront-host-url').value;
+            function getBcStoreUrl() {
+                return document.getElementById('bc-store-url').value;
+            }
+
+            async function fetchPaymentWalletButtons() {
+                const bcStoreUrl = getBcStoreUrl();
+                const billingAddressCountry = 'US';
+
+                const graphQLUrl = `${bcStoreUrl}/graphql`;
+                const graphQLQuery = `
+                    query {
+                        site {
+                            paymentWallets(billingCountry: ${billingAddressCountry}) {
+                                edges {
+                                    node {
+                                        paymentMethodId
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `;
+
+                try {
+                    const response = await fetch(graphQLUrl, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(graphQLQuery),
+                    });
+
+                    console.log(response.body);
+
+                    return response.body.data.paymentWallets.edges.map(paymentWalletEdge => {
+                        return paymentWalletEdge.node.paymentMethodId;
+                    });
+                } catch(error) {
+                    console.error(error);
+
+                    return {};
+                }
+            }
+
+            function getWalletButtonsOption(paymentMethodId) {
+                switch (paymentMethodId) {
+                    case 'paypalcommerce.paypal': {
+                        return {
+                            paymentMethodId: 'paypalcommerce.paypal',
+                            containerId: 'paypalcommerce-button',
+                            options: {
+                                style: {"color":"gold","label":"checkout"},
+                                // TODO: When PayNow is enabled
+                                // onComplete: () => {
+                                //     const url = '/checkout/order-confirmation';
+                                //     location.replace(url);
+                                //     return new Promise();
+                                // },
+                            },
+                        };
+                    }
+                    default:
+                        return {};
+                }
+            }
+
+            async function onRenderPayPalButtonClick() {
+                const bcStoreUrl = getBcStoreUrl();
                 const env = document.getElementById('env-select').value;
 
-                console.log({ bcStoreUrl, env });
+                // TODO: disable button when loading
+                // const button = document.getElementById('render-paypal-button');
 
                 if (!bcStoreUrl) {
                     console.error('Can\'t render PayPal button because bc store url is not provided');
@@ -50,23 +115,15 @@
                     return;
                 }
 
-                window.BigCommerce.renderWalletButtons({
+                const paymentWalletsList = await fetchPaymentWalletButtons();
+                const walletButtonsOptions = paymentWalletsList.map(getWalletButtonsOption);
+
+                console.log({ bcStoreUrl, env, paymentWalletsList, walletButtonsOptions });
+
+                await window.BigCommerce.renderWalletButtons({
                     bcStoreUrl,
                     env,
-                    walletButtons: [
-                        {
-                            paymentMethodId: 'paypalcommerce.paypal',
-                            containerId: 'paypalcommerce-button',
-                            options: {
-                                style: {"color":"gold","label":"checkout"},
-                                onComplete: () => {
-                                    const url = '/checkout/order-confirmation';
-                                    location.replace(url);
-                                    return new Promise();
-                                },
-                            },
-                        },
-                    ],
+                    walletButtons: walletButtonsOptions,
                 });
             }
 

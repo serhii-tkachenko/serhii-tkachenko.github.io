@@ -27,9 +27,14 @@
             <input
                 id="bc-store-url"
                 type="text"
-                value="https://my-dev-store-165941143.store.bcdev/"
+                value="https://my-dev-store-165941143.store.bcdev"
                 style="width: 700px"
             />
+        </div>
+
+        <div>
+            <input id="graphql-checkbox" type="checkbox" />
+            <label for="graphql-checkbox">Use GraphQL data</label>
         </div>
 
         <button id="render-paypal-button">Render PayPal Button</button>
@@ -64,7 +69,10 @@
                 try {
                     const response = await fetch(graphQLUrl, {
                         method: "POST",
-                        headers: {'Content-Type': 'application/json'},
+                        headers: {
+                            'Content-Type': 'application/json',
+
+                        },
                         body: JSON.stringify(graphQLQuery),
                     });
 
@@ -105,6 +113,7 @@
             async function onRenderPayPalButtonClick() {
                 const bcStoreUrl = getBcStoreUrl();
                 const env = document.getElementById('env-select').value;
+                const isGqlEnabled = document.getElementById('graphql-checkbox').checked;
 
                 // TODO: disable button when loading
                 // const button = document.getElementById('render-paypal-button');
@@ -115,7 +124,9 @@
                     return;
                 }
 
-                const paymentWalletsList = await fetchPaymentWalletButtons();
+                const mockedPaymentWalletsList = ['paypalcommerce.paypal'];
+
+                const paymentWalletsList = isGqlEnabled ? await fetchPaymentWalletButtons() : mockedPaymentWalletsList;
                 const walletButtonsOptions = paymentWalletsList.map(getWalletButtonsOption);
 
                 console.log({ bcStoreUrl, env, paymentWalletsList, walletButtonsOptions });

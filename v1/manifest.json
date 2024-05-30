@@ -1,0 +1,11 @@
+{
+  "version": "1.611.0",
+  "js": [
+    "v1/checkout-sdk-8f5731ad.js",
+    "v1/checkout-button-567fe292.js",
+    "v1/embedded-checkout-ea692eb5.js",
+    "v1/extension-5fc4f5c0.js",
+    "v1/hosted-form-d824bb3a.js",
+    "v1/internal-mappers-da62a3e9.js"
+  ]
+}

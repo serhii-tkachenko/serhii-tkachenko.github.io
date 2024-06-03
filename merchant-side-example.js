@@ -161,8 +161,6 @@ function onMockCheckboxChange(e) {
     const apiRelatedContainer = document.getElementById('api-related');
 
     apiRelatedContainer.style.display = e.target.checked ? 'none' : 'block';
-
-    console.log(apiRelatedContainer.style.display);
 }
 
 async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
@@ -176,12 +174,12 @@ async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
         return;
     }
 
-    const mockedPaymentWalletsList = ['paypalcommerce.paypal'];
+    const mockedPaymentWalletsList = paymentMethodsList || ['paypalcommerce.paypal'];
 
     const paymentWalletsList = isMockEnabled ? mockedPaymentWalletsList : await fetchPaymentWalletButtons();
     const walletButtonsOptions = paymentWalletsList.map(getWalletButtonsOption);
 
-    generateWalletButtonsContainers();
+    generateWalletButtonsContainers(walletButtonsOptions.map(({containerId}) => containerId));
 
     await window.BigCommerce.renderWalletButtons({
         bcStoreUrl,
@@ -196,10 +194,14 @@ async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
  *
  * */
 const button = document.getElementById('render-wallet-buttons');
-button.addEventListener('click', () => onRenderWalletButtonsButtonClick);
+button.addEventListener('click', () => {
+    onRenderWalletButtonsButtonClick();
+});
 
 const braintreeButton = document.getElementById('render-braintree-button');
-braintreeButton.addEventListener('click', () => onRenderWalletButtonsButtonClick(['braintree.paypal']));
+braintreeButton.addEventListener('click', () => {
+    onRenderWalletButtonsButtonClick(['braintree.paypal']);
+});
 
 const mockCheckbox = document.getElementById('mock-checkbox');
 mockCheckbox.addEventListener('change', onMockCheckboxChange);

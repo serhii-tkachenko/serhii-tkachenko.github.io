@@ -1,27 +1,5 @@
 /**
  *
- * Mocked data
- *
- */
-const renderWalletButtonsProps = {
-    walletButtons: [
-        {
-            paymentMethodId: 'paypalcommerce.paypal',
-            containerId: 'paypalcommerce-button',
-            options: {
-                style: {"color":"gold","label":"checkout"},
-                onComplete: () => {
-                    const url = '/checkout/order-confirmation';
-                    location.replace(url);
-                    return new Promise();
-                },
-            },
-        },
-    ],
-};
-
-/**
- *
  * Checkout kit loader
  *
  */
@@ -76,25 +54,6 @@ async function renderWalletButtons(props) {
 
 /**
  *
- * Payment provider initialization options mapper
- *
- * */
-function getPaymentProviderInitializationOptions(props) {
-    const optionsGetter = {
-        'paypalcommerce.paypal': getPayPalCommerceButtonInitializationOptions,
-    };
-
-    const paymentProviderInitializationOptionsGetter = optionsGetter[props.paymentMethodId];
-
-    if (!paymentProviderInitializationOptionsGetter) {
-        return;
-    }
-
-    return paymentProviderInitializationOptionsGetter(props);
-}
-
-/**
- *
  * Wallet buttons rendering methods
  *
  * */
@@ -122,9 +81,39 @@ function renderWalletButton(props) {
 
 /**
  *
+ * Payment provider initialization options mapper
+ *
+ * */
+function getPaymentProviderInitializationOptions(props) {
+    const optionsGetter = {
+        'braintree.paypal': geBraintreePayPalButtonInitializationOptions,
+        'paypalcommerce.paypal': getPayPalCommerceButtonInitializationOptions,
+    };
+
+    const paymentProviderInitializationOptionsGetter = optionsGetter[props.paymentMethodId];
+
+    if (!paymentProviderInitializationOptionsGetter) {
+        return;
+    }
+
+    return paymentProviderInitializationOptionsGetter(props);
+}
+
+/**
+ *
  * Provider specific button rendering methods
  *
  * */
+function geBraintreePayPalButtonInitializationOptions(props) {
+    return {
+        methodId: 'braintreepaypal',
+        containerId: props.containerId,
+        braintreepaypal: {
+            ...props.options,
+        },
+    }
+}
+
 function getPayPalCommerceButtonInitializationOptions(props) {
     return {
         methodId: 'paypalcommerce',
@@ -135,7 +124,6 @@ function getPayPalCommerceButtonInitializationOptions(props) {
     };
 }
 
-
 /**
  *
  * window object code
@@ -144,5 +132,4 @@ function getPayPalCommerceButtonInitializationOptions(props) {
 window.BigCommerce = {
     ...window.BigCommerce,
     renderWalletButtons,
-    renderWalletButtonsPropsMock: renderWalletButtonsProps,
 };

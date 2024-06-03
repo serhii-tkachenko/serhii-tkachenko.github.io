@@ -7,140 +7,96 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Checkout sdk headless store</title>
 
-    <script src="index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/simpledotcss/simple.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <script src="main-app.js"></script>
 </head>
 <body>
-    <div>
-        <h1>Input data</h1>
-        <div style="padding-bottom: 20px">
-            <label for="env-select">Environment:</label>
-            <br/>
-            <select name="env" id="env-select">
-                <option value="local" selected="selected">Local</option>
-                <option value="int">Integration</option>
-                <option value="prod">Production</option>
-            </select>
-        </div>
-        <div style="padding-bottom: 20px">
-            <label for="bc-store-url">Storefront Host Url (example: https://my-dev-store-165941143.store.bcdev/): </label>
-            <br/>
-            <input
-                id="bc-store-url"
-                type="text"
-                value="https://my-dev-store-165941143.store.bcdev"
-                style="width: 700px"
-            />
-        </div>
+    <div class="content">
+        <section class="input-section">
+            <h3>Input:</h3>
 
-        <div>
-            <input id="graphql-checkbox" type="checkbox" />
-            <label for="graphql-checkbox">Use GraphQL data</label>
-        </div>
+            <div class="input-data">
+                <div class="input-block">
+                    <label for="env-select">Environment:</label>
+                    <select name="env" id="env-select">
+                        <option value="local" selected="selected">Local</option>
+                        <option value="int">Integration</option>
+                        <option value="prod">Production</option>
+                    </select>
+                </div>
 
-        <button id="render-paypal-button">Render PayPal Button</button>
+                <div class="input-block">
+                    <label for="bc-store-url">BC Store URL (example: https://my-dev-store-165941143.store.bcdev): </label>
+                    <input
+                        id="bc-store-url"
+                        type="text"
+                        value="https://my-dev-store-165941143.store.bcdev"
+                    />
+                </div>
 
-        <div style="margin-top: 40px">Here should be a paypal button:</div>
-        <div id="paypalcommerce-button"></div>
+                <div class="input-block">
+                    <input id="mock-checkbox" type="checkbox" checked />
+                    <label for="mock-checkbox">Use Mocked data</label>
+                </div>
 
-        <script async>
-            function getBcStoreUrl() {
-                return document.getElementById('bc-store-url').value;
-            }
+                <div id="api-related" style="display: none">
+                    <div class="input-block">
+                        <label for="x-auth-token-input">X-Auth-Token:</label>
+                        <input
+                            id="x-auth-token-input"
+                            type="text"
+                        />
+                    </div>
 
-            async function fetchPaymentWalletButtons() {
-                const bcStoreUrl = getBcStoreUrl();
-                const billingAddressCountry = 'US';
+                    <div class="input-block">
+                        <label for="token-exp-time-input">Preferable API token expiration time (in seconds):</label>
+                        <input
+                            id="token-exp-time-input"
+                            type="number"
+                        />
+                    </div>
 
-                const graphQLUrl = `${bcStoreUrl}/graphql`;
-                const graphQLQuery = `
-                    query {
-                        site {
-                            paymentWallets(billingCountry: ${billingAddressCountry}) {
-                                edges {
-                                    node {
-                                        paymentMethodId
-                                    }
-                                }
-                            }
-                        }
-                    }
-                `;
+                    <div class="input-block">
+                        <label for="store-hash-input">Store hash:</label>
+                        <input
+                            id="store-hash-input"
+                            type="text"
+                        />
+                    </div>
 
-                try {
-                    const response = await fetch(graphQLUrl, {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
+                    <div class="input-block">
+                        <label for="cors-origins-input">Allowed cors origins (example: https://www.google.com, https://green-coffee-shop.mybigcommerce.com):</label>
+                        <input
+                            id="cors-origins-input"
+                            type="text"
+                        />
+                    </div>
 
-                        },
-                        body: JSON.stringify(graphQLQuery),
-                    });
+                    <div class="input-block">
+                        <label for="channel-id-input">Channel id (number):</label>
+                        <input
+                            id="channel-id-input"
+                            type="number"
+                        />
+                    </div>
+                </div>
+            </div>
 
-                    console.log(response.body);
 
-                    return response.body.data.paymentWallets.edges.map(paymentWalletEdge => {
-                        return paymentWalletEdge.node.paymentMethodId;
-                    });
-                } catch(error) {
-                    console.error(error);
+            <button id="render-wallet-buttons">Render Wallet Buttons</button>
+            <button id="render-braintree-button">Render Braintree Button</button>
+        </section>
 
-                    return {};
-                }
-            }
+        <section class="outcome-section">
+            <h3>Output:</h3>
 
-            function getWalletButtonsOption(paymentMethodId) {
-                switch (paymentMethodId) {
-                    case 'paypalcommerce.paypal': {
-                        return {
-                            paymentMethodId: 'paypalcommerce.paypal',
-                            containerId: 'paypalcommerce-button',
-                            options: {
-                                style: {"color":"gold","label":"checkout"},
-                                // TODO: When PayNow is enabled
-                                // onComplete: () => {
-                                //     const url = '/checkout/order-confirmation';
-                                //     location.replace(url);
-                                //     return new Promise();
-                                // },
-                            },
-                        };
-                    }
-                    default:
-                        return {};
-                }
-            }
-
-            async function onRenderPayPalButtonClick() {
-                const bcStoreUrl = getBcStoreUrl();
-                const env = document.getElementById('env-select').value;
-                const isGqlEnabled = document.getElementById('graphql-checkbox').checked;
-
-                // TODO: disable button when loading
-                // const button = document.getElementById('render-paypal-button');
-
-                if (!bcStoreUrl) {
-                    console.error('Can\'t render PayPal button because bc store url is not provided');
-
-                    return;
-                }
-
-                const mockedPaymentWalletsList = ['paypalcommerce.paypal'];
-
-                const paymentWalletsList = isGqlEnabled ? await fetchPaymentWalletButtons() : mockedPaymentWalletsList;
-                const walletButtonsOptions = paymentWalletsList.map(getWalletButtonsOption);
-
-                console.log({ bcStoreUrl, env, paymentWalletsList, walletButtonsOptions });
-
-                await window.BigCommerce.renderWalletButtons({
-                    bcStoreUrl,
-                    env,
-                    walletButtons: walletButtonsOptions,
-                });
-            }
-
-            const button = document.getElementById('render-paypal-button');
-            button.addEventListener('click', onRenderPayPalButtonClick);
-        </script>
+            <div class="outcome-data">
+                <div id="wallet-buttons-list"></div>
+            </div>
+        </section>
     </div>
+
+    <script async src="merchant-side-example.js"></script>
 </body>
 </html>

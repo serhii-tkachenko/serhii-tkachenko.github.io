@@ -1,0 +1,52 @@
+body {
+    display: block;
+    padding: 40px;
+}
+
+section {
+    border-bottom: none;
+}
+
+.content {
+    display: grid;
+    grid-column-gap: 60px;
+    grid-template-columns: calc(50% - 30px) calc(50% - 30px);
+}
+
+.input-section {
+
+}
+
+.input-data {
+
+}
+
+.input-block {
+    padding-bottom: 20px;
+}
+
+.input-block input[type="text"] {
+    width: 100%;
+}
+
+.input-block label {
+    font-size: 16px;
+}
+
+.outcome-section {
+
+}
+
+.outcome-data {
+    background-color: #151515;
+    min-height: 300px;
+    width: 100%;
+}
+
+@media screen and (max-width: 1024px) {
+    .content {
+        grid-column-gap: 0;
+        grid-row-gap: 20px;
+        grid-template-columns: 100%;
+    }
+}

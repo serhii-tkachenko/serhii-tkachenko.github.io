@@ -24,7 +24,7 @@ function getAllowedCorsOrigins() {
 }
 
 function getChannelId() {
-    return document.getElementById('channel-id-input').value || 1;
+    return Number(document.getElementById('channel-id-input').value) || 1;
 
 }
 
@@ -56,7 +56,7 @@ async function getStorefrontApiToken() {
         body: JSON.stringify({
             allowed_cors_origins: getAllowedCorsOrigins(),
             channel_id: getChannelId(),
-            expires_at: Date.now() + getTokenExpirationTime() * 1000,
+            expires_at: (Date.now() + getTokenExpirationTime() * 1000) / 1000,
         }),
     };
 
@@ -71,7 +71,7 @@ async function getStorefrontApiToken() {
  *
  *
  * */
-async function fetchPaymentWalletButtons(token) {
+async function fetchPaymentWalletButtons() {
     const bcStoreUrl = getBcStoreUrl();
     const storefrontApiToken = getStorefrontApiToken();
     // const xxSrfToken = ''; // TODO:

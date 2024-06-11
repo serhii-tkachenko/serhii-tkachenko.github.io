@@ -25,7 +25,10 @@ function getAllowedCorsOrigins() {
 
 function getChannelId() {
     return Number(document.getElementById('channel-id-input').value) || 1;
+}
 
+function getProductId() {
+    return Number(document.getElementById('product-id-input').value);
 }
 
 function getTokenExpirationTime() {
@@ -68,7 +71,42 @@ async function getStorefrontApiToken() {
 
 /**
  *
+ * Create cart API request
  *
+ */
+async function createCart(productId) {
+    const bcStoreUrl = getBcStoreUrl();
+    const url = `${bcStoreUrl}//api/storefront/carts`;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lineItems: [{
+                    quantity: 1,
+                    productId,
+                }],
+            }),
+        });
+
+        const { data } = await response.json();
+
+        console.log({ cartCreationRequestData: data });
+    } catch(error) {
+        console.error(error);
+
+        return {};
+    }
+}
+
+
+/**
+ *
+ * GQL request to get a list of wallet buttons
  *
  * */
 async function fetchPaymentWalletButtons() {
@@ -188,6 +226,21 @@ async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
     });
 }
 
+async function onCreateCartClick() {
+    console.log('test');
+
+    const productId = getProductId();
+
+
+    if (!productId) {
+        console.error('Can\'t create cart because product id is not provided');
+
+        return;
+    }
+
+    await createCart();
+}
+
 /**
  *
  * UI communication
@@ -205,6 +258,9 @@ braintreeButton.addEventListener('click', () => {
 
 const mockCheckbox = document.getElementById('mock-checkbox');
 mockCheckbox.addEventListener('change', onMockCheckboxChange);
+
+const cartCreationButton = document.getElementById('cart-creation-button');
+cartCreationButton.addEventListener('click', onCreateCartClick);
 
 /**
  *

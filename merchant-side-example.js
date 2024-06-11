@@ -76,7 +76,7 @@ async function getStorefrontApiToken() {
  */
 async function createCart(productId) {
     const bcStoreUrl = getBcStoreUrl();
-    const url = `${bcStoreUrl}//api/storefront/carts`;
+    const url = `${bcStoreUrl}/api/storefront/carts`;
 
     try {
         const response = await fetch(url, {

@@ -3,6 +3,14 @@ body {
     padding: 40px;
 }
 
+body.use-api .api-related {
+    display: block;
+}
+
+.api-related {
+    display: none;
+}
+
 section {
     border-bottom: none;
 }
@@ -11,14 +19,6 @@ section {
     display: grid;
     grid-column-gap: 60px;
     grid-template-columns: calc(50% - 30px) calc(50% - 30px);
-}
-
-.input-section {
-
-}
-
-.input-data {
-
 }
 
 .input-block {
@@ -37,8 +37,13 @@ section {
 
 }
 
+button {
+    margin-right: 20px;
+}
+
 .outcome-data {
     background-color: #151515;
+    margin-bottom: 35px;
     min-height: 300px;
     width: 100%;
 }

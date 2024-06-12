@@ -103,6 +103,88 @@ async function createCart(productId) {
     }
 }
 
+async function createCartWithStorefrontAPI(productId) {
+    const storeHash = getStoreHash();
+    const xAuthToken = getXAuthToken();
+
+    if (!storeHash || !xAuthToken) {
+        console.error('Wallet buttons can\'t be rendered because store hash or x-auth-token is not provided');
+    }
+
+    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/carts`;
+
+    const options = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-Auth-Token': xAuthToken,
+        },
+        body: JSON.stringify({
+            customer_id: 0,
+            line_items: [{
+                quantity: 1,
+                product_id: productId,
+            }],
+            channel_id: 1,
+            currency: {
+                code: 'USD',
+            },
+            locale: 'en-US',
+        }),
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const { data } = await response.json();
+
+        console.log({ cartCreationV2RequestData: data });
+    } catch(error) {
+        console.error(error);
+
+        return {};
+    }
+}
+
+async function createCartWithGraphQL(productId) {
+    const bcStoreUrl = getBcStoreUrl();
+    const storefrontApiToken = getStorefrontApiToken();
+
+    const graphQLUrl = `${bcStoreUrl}/graphql`;
+    const graphQLMutation = `
+        mutation {
+            cart {
+                createCart(input: {lineItems: {quantity: 1, productEntityId: ${productId}}) {
+                    cart {
+                        entityId
+                    }
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await fetch(graphQLUrl, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${storefrontApiToken}`,
+            },
+            body: JSON.stringify({
+                query: graphQLMutation,
+            }),
+        });
+
+        const { data } = await response.json();
+
+        console.log({ cartCreationRequestData: data });
+    } catch(error) {
+        console.error(error);
+
+        return {};
+    }
+}
+
 
 /**
  *
@@ -112,8 +194,6 @@ async function createCart(productId) {
 async function fetchPaymentWalletButtons() {
     const bcStoreUrl = getBcStoreUrl();
     const storefrontApiToken = getStorefrontApiToken();
-    // const xxSrfToken = ''; // TODO:
-    // const xSfCsrfToken = ''; // TODO:
     const billingAddressCountry = "US";
 
     const graphQLUrl = `${bcStoreUrl}/graphql`;
@@ -159,7 +239,6 @@ async function fetchPaymentWalletButtons() {
     }
 }
 
-
 /**
  *
  * Options mapper
@@ -196,9 +275,11 @@ function getWalletButtonsOption(paymentMethodId) {
  *
  */
 function onMockCheckboxChange(e) {
-    const apiRelatedContainer = document.getElementById('api-related');
-
-    apiRelatedContainer.style.display = e.target.checked ? 'none' : 'block';
+    if (e.target.checked) {
+        document.body.classList.remove('use-api');
+    } else {
+        document.body.classList.add('use-api');
+    }
 }
 
 async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
@@ -226,11 +307,8 @@ async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
     });
 }
 
-async function onCreateCartClick() {
-    console.log('test');
-
+async function onCreateCartClick(version) {
     const productId = getProductId();
-
 
     if (!productId) {
         console.error('Can\'t create cart because product id is not provided');
@@ -238,7 +316,17 @@ async function onCreateCartClick() {
         return;
     }
 
-    await createCart();
+    if (version === 'v1') {
+        await createCart(productId);
+    }
+
+    if (version === 'v2') {
+        await createCartWithStorefrontAPI(productId);
+    }
+
+    if (version === 'gql') {
+        await createCartWithGraphQL();
+    }
 }
 
 /**
@@ -260,7 +348,13 @@ const mockCheckbox = document.getElementById('mock-checkbox');
 mockCheckbox.addEventListener('change', onMockCheckboxChange);
 
 const cartCreationButton = document.getElementById('cart-creation-button');
-cartCreationButton.addEventListener('click', onCreateCartClick);
+cartCreationButton.addEventListener('click', () => onCreateCartClick('v1'));
+
+const cartCreationStorefrontButton = document.getElementById('cart-creation-button-storefront');
+cartCreationStorefrontButton.addEventListener('click', () => onCreateCartClick('v2'));
+
+const cartCreationGQLButton = document.getElementById('cart-creation-button-gql');
+cartCreationGQLButton.addEventListener('click', () => onCreateCartClick('gql'));
 
 /**
  *

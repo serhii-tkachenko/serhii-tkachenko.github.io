@@ -14,81 +14,80 @@
 <body>
     <div class="content">
         <section class="input-section">
-            <div>
-                <h3>Input:</h3>
+            <h3>Input:</h3>
 
-                <div class="input-data">
-                    <div class="input-block">
-                        <label for="env-select">Environment:</label>
-                        <select name="env" id="env-select">
-                            <option value="local" selected="selected">Local</option>
-                            <option value="int">Integration</option>
-                            <option value="prod">Production</option>
-                        </select>
-                    </div>
-
-                    <div class="input-block">
-                        <label for="bc-store-url">BC Store URL (example: https://my-dev-store-165941143.store.bcdev): </label>
-                        <input
-                                id="bc-store-url"
-                                type="text"
-                                value="https://my-dev-store-165941143.store.bcdev"
-                        />
-                    </div>
-
-                    <div class="input-block">
-                        <input id="mock-checkbox" type="checkbox" checked />
-                        <label for="mock-checkbox">Use Mocked data</label>
-                    </div>
-
-                    <div id="api-related" style="display: none">
-                        <div class="input-block">
-                            <label for="x-auth-token-input">X-Auth-Token:</label>
-                            <input
-                                    id="x-auth-token-input"
-                                    type="text"
-                            />
-                        </div>
-
-                        <div class="input-block">
-                            <label for="token-exp-time-input">Preferable API token expiration time (in seconds):</label>
-                            <input
-                                    id="token-exp-time-input"
-                                    type="number"
-                            />
-                        </div>
-
-                        <div class="input-block">
-                            <label for="store-hash-input">Store hash:</label>
-                            <input
-                                    id="store-hash-input"
-                                    type="text"
-                            />
-                        </div>
-
-                        <div class="input-block">
-                            <label for="cors-origins-input">Allowed cors origins (example: https://green-coffee-shop.mybigcommerce.com):</label>
-                            <input
-                                    id="cors-origins-input"
-                                    type="text"
-                            />
-                        </div>
-
-                        <div class="input-block">
-                            <label for="channel-id-input">Channel id (number):</label>
-                            <input
-                                    id="channel-id-input"
-                                    type="number"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <button id="render-wallet-buttons">Render Wallet Buttons</button>
-                <button id="render-braintree-button">Render Braintree Button</button>
+            <div class="input-block">
+                <input id="mock-checkbox" type="checkbox" checked />
+                <label for="mock-checkbox">Use Mocked data</label>
             </div>
 
             <div>
+                <h4>Default settings:</h4>
+
+                <div class="input-block">
+                    <label for="env-select">Environment:</label>
+                    <select name="env" id="env-select">
+                        <option value="local" selected="selected">Local</option>
+                        <option value="int">Integration</option>
+                        <option value="prod">Production</option>
+                    </select>
+                </div>
+
+                <div class="input-block">
+                    <label for="bc-store-url">BC Store URL (example: https://my-dev-store-165941143.store.bcdev): </label>
+                    <input
+                        id="bc-store-url"
+                        type="text"
+                        value="https://my-dev-store-165941143.store.bcdev"
+                    />
+                </div>
+            </div>
+
+            <div class="api-related">
+                <h4>Tokens section:</h4>
+
+                <div class="input-block">
+                    <label for="x-auth-token-input">X-Auth-Token:</label>
+                    <input
+                        id="x-auth-token-input"
+                        type="text"
+                    />
+                </div>
+
+                <div class="input-block">
+                    <label for="token-exp-time-input">Preferable API token expiration time (in seconds):</label>
+                    <input
+                        id="token-exp-time-input"
+                        type="number"
+                    />
+                </div>
+
+                <div class="input-block">
+                    <label for="store-hash-input">Store hash:</label>
+                    <input
+                        id="store-hash-input"
+                        type="text"
+                    />
+                </div>
+
+                <div class="input-block">
+                    <label for="cors-origins-input">Allowed cors origins (example: https://green-coffee-shop.mybigcommerce.com):</label>
+                    <input
+                        id="cors-origins-input"
+                        type="text"
+                    />
+                </div>
+
+                <div class="input-block">
+                    <label for="channel-id-input">Channel id (number):</label>
+                    <input
+                        id="channel-id-input"
+                        type="number"
+                    />
+                </div>
+            </div>
+
+            <div class="api-related">
                 <h4>Cart section:</h4>
 
                 <div class="input-data">
@@ -101,7 +100,9 @@
                     </div>
                 </div>
 
-                <button id="cart-creation-button">Create Cart</button>
+                <button id="cart-creation-button">Create Cart V1</button>
+                <button id="cart-creation-button-storefront">Create Cart V2</button>
+                <button id="cart-creation-button-gql">Create Cart with GraphQL</button>
             </div>
         </section>
 
@@ -111,6 +112,9 @@
             <div class="outcome-data">
                 <div id="wallet-buttons-list"></div>
             </div>
+
+            <button id="render-wallet-buttons">Render Wallet Buttons</button>
+            <button id="render-braintree-button">Render Braintree Button</button>
         </section>
     </div>
 

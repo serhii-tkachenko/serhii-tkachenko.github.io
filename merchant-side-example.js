@@ -5,7 +5,10 @@
  * */
 function getBcStoreUrl() {
     return document.getElementById('bc-store-url').value;
+}
 
+function getBcApiUrl() {
+    return document.getElementById('bc-api-url').value;
 }
 
 function getStoreHash() {
@@ -48,7 +51,9 @@ async function getStorefrontApiToken() {
         console.error('Wallet buttons can\'t be rendered because store hash or x-auth-token is not provided');
     }
 
-    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/storefront/api-token`;
+    const bcApiUrl = getBcApiUrl();
+
+    const url = `${bcApiUrl}/stores/${storeHash}/v3/storefront/api-token`;
     const options = {
         method: 'POST',
         headers: {
@@ -69,11 +74,6 @@ async function getStorefrontApiToken() {
     return data.token;
 }
 
-/**
- *
- * Create cart API request
- *
- */
 async function createCart(productId) {
     const bcStoreUrl = getBcStoreUrl();
     const url = `${bcStoreUrl}/api/storefront/carts`;
@@ -111,7 +111,9 @@ async function createCartWithStorefrontAPI(productId) {
         console.error('Wallet buttons can\'t be rendered because store hash or x-auth-token is not provided');
     }
 
-    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/carts`;
+    const bcApiUrl = getBcApiUrl();
+
+    const url = `${bcApiUrl}/stores/${storeHash}/v3/carts`;
 
     const options = {
         method: 'POST',
@@ -185,12 +187,6 @@ async function createCartWithGraphQL(productId) {
     }
 }
 
-
-/**
- *
- * GQL request to get a list of wallet buttons
- *
- * */
 async function fetchPaymentWalletButtons() {
     const bcStoreUrl = getBcStoreUrl();
     const storefrontApiToken = getStorefrontApiToken();

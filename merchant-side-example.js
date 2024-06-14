@@ -60,13 +60,13 @@ async function getStorefrontApiToken() {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'X-Auth-Token': xAuthToken,
-            mode: 'no-cors',
         },
         body: JSON.stringify({
             allowed_cors_origins: getAllowedCorsOrigins(),
             channel_id: getChannelId(),
             expires_at: (Date.now() + getTokenExpirationTime() * 1000) / 1000,
         }),
+        mode: 'no-cors',
     };
 
     const response = await fetch(url, options);
@@ -85,7 +85,6 @@ async function createCart(productId) {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                mode: 'no-cors',
             },
             body: JSON.stringify({
                 lineItems: [{
@@ -93,6 +92,7 @@ async function createCart(productId) {
                     productId,
                 }],
             }),
+            mode: 'no-cors',
         });
 
         const { data } = await response.json();
@@ -123,7 +123,6 @@ async function createCartWithStorefrontAPI(productId) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'X-Auth-Token': xAuthToken,
-            mode: 'no-cors',
         },
         body: JSON.stringify({
             customer_id: 0,
@@ -137,6 +136,7 @@ async function createCartWithStorefrontAPI(productId) {
             },
             locale: 'en-US',
         }),
+        mode: 'no-cors',
     };
 
     try {
@@ -174,11 +174,11 @@ async function createCartWithGraphQL(productId) {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${storefrontApiToken}`,
-                mode: 'no-cors',
             },
             body: JSON.stringify({
                 query: graphQLMutation,
             }),
+            mode: 'no-cors',
         });
 
         const { data } = await response.json();
@@ -217,11 +217,11 @@ async function fetchPaymentWalletButtons() {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${storefrontApiToken}`,
-                mode: 'no-cors',
             },
             body: JSON.stringify({
                 query: graphQLQuery,
             }),
+            mode: 'no-cors',
         });
 
         const { data } = await response.json();

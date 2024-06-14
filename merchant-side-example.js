@@ -85,6 +85,7 @@ async function createCart(productId) {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
+                mode: 'no-cors',
             },
             body: JSON.stringify({
                 lineItems: [{
@@ -122,6 +123,7 @@ async function createCartWithStorefrontAPI(productId) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'X-Auth-Token': xAuthToken,
+            mode: 'no-cors',
         },
         body: JSON.stringify({
             customer_id: 0,
@@ -172,6 +174,7 @@ async function createCartWithGraphQL(productId) {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${storefrontApiToken}`,
+                mode: 'no-cors',
             },
             body: JSON.stringify({
                 query: graphQLMutation,
@@ -214,8 +217,7 @@ async function fetchPaymentWalletButtons() {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${storefrontApiToken}`,
-                // 'X-XSRF-TOKEN': '',
-                // 'X-Sf-Csrf-Token': '',
+                mode: 'no-cors',
             },
             body: JSON.stringify({
                 query: graphQLQuery,

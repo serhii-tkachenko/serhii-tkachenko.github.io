@@ -60,6 +60,7 @@ async function getStorefrontApiToken() {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'X-Auth-Token': xAuthToken,
+            mode: 'no-cors',
         },
         body: JSON.stringify({
             allowed_cors_origins: getAllowedCorsOrigins(),

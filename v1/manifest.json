@@ -1,11 +1,13 @@
 {
-  "version": "1.611.0",
+  "version": "1.631.0",
   "js": [
-    "v1/checkout-sdk-8f5731ad.js",
-    "v1/checkout-button-567fe292.js",
-    "v1/embedded-checkout-ea692eb5.js",
-    "v1/extension-5fc4f5c0.js",
-    "v1/hosted-form-d824bb3a.js",
-    "v1/internal-mappers-da62a3e9.js"
+    "v1/checkout-sdk-0455a0fc.js",
+    "v1/checkout-button-e22cf884.js",
+    "v1/embedded-checkout-544c3143.js",
+    "v1/extension-1d0e69c7.js",
+    "v1/hosted-form-d75f5bc2.js",
+    "v1/internal-mappers-da62a3e9.js",
+    "v1/hosted-form-v2-iframe-content-928592c7.js",
+    "v1/hosted-form-v2-iframe-host-3e6e85de.js"
   ]
 }

@@ -15,8 +15,6 @@ async function getCheckoutKitLoader(env) {
                     ? 'https://checkout-sdk.integration.zone/v1/loader.js'
                     : 'https://checkout-sdk.bigcommerce.com/v1/loader.js';
 
-            console.log(env, '<--->', script.src);
-
             script.onload = resolve;
 
             document.body.append(script);
@@ -26,10 +24,10 @@ async function getCheckoutKitLoader(env) {
     return window.checkoutKitLoader;
 }
 
-async function initCheckoutButtonInitializer(bcStoreHost) {
+async function initCheckoutButtonInitializer(bcStoreHost, storefrontJwtToken) {
     const checkoutButtonModule = await window.checkoutKitLoader.load('checkout-button');
 
-    window.checkoutButtonInitializer = checkoutButtonModule.createCheckoutButtonInitializer({ host: bcStoreHost });
+    window.checkoutButtonInitializer = checkoutButtonModule.createCheckoutButtonInitializer({ host: bcStoreHost, storefrontJwtToken });
 }
 
 /**
@@ -38,7 +36,7 @@ async function initCheckoutButtonInitializer(bcStoreHost) {
  *
  * */
 async function renderWalletButtons(props) {
-    const { bcStoreUrl, env, walletButtons } = props;
+    const { bcStoreUrl, storefrontJwtToken, env, walletButtons } = props;
 
     if (walletButtons.length === 0) {
         console.error('Wallet buttons can not be rendered because wallet buttons options did not provided');
@@ -47,7 +45,7 @@ async function renderWalletButtons(props) {
     }
 
     await getCheckoutKitLoader(env);
-    await initCheckoutButtonInitializer(bcStoreUrl);
+    await initCheckoutButtonInitializer(bcStoreUrl, storefrontJwtToken);
 
     return walletButtons.map(renderWalletButton);
 }

@@ -38,6 +38,10 @@ function getTokenExpirationTime() {
     return document.getElementById('token-exp-time-input').value || 2;
 }
 
+function getStorefrontJwtToken() {
+    return document.getElementById('bc-storefront-jwt').value;
+}
+
 /**
 *
 * API generation requests
@@ -283,6 +287,7 @@ function onMockCheckboxChange(e) {
 
 async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
     const bcStoreUrl = getBcStoreUrl();
+    const storefrontJwtToken = getStorefrontJwtToken();
     const env = document.getElementById('env-select').value;
     const isMockEnabled = document.getElementById('mock-checkbox').checked;
 
@@ -301,6 +306,7 @@ async function onRenderWalletButtonsButtonClick(paymentMethodsList) {
 
     await window.BigCommerce.renderWalletButtons({
         bcStoreUrl,
+        storefrontJwtToken,
         env,
         walletButtons: walletButtonsOptions,
     });

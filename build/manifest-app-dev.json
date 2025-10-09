@@ -5,9 +5,7 @@
   "js": [
     "runtime.js",
     "transients.js",
-    "polyfill.js",
-    "sentry.js",
-    "vendors.js",
+    "vendor-initial.js",
     "checkout.js"
   ],
   "integrity": {}

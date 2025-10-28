@@ -19,6 +19,16 @@ eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpa
 
 /***/ }),
 
+/***/ "./packages/dom-utils/src/getAppliedStyles.ts":
+/*!****************************************************!*\
+  !*** ./packages/dom-utils/src/getAppliedStyles.ts ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ getAppliedStyles)\n/* harmony export */ });\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ \"./node_modules/lodash/lodash.js\");\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);\n\nfunction getAppliedStyles(element, properties, pseudoElementSelector) {\n    const declaration = window.getComputedStyle(element, pseudoElementSelector);\n    return properties.reduce((result, propertyName) => (Object.assign(Object.assign({}, result), { [propertyName]: declaration.getPropertyValue((0,lodash__WEBPACK_IMPORTED_MODULE_0__.kebabCase)(propertyName)) })), {});\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9wYWNrYWdlcy9kb20tdXRpbHMvc3JjL2dldEFwcGxpZWRTdHlsZXMudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQW1DO0FBRXBCLFNBQVMsZ0JBQWdCLENBQ3BDLE9BQW9CLEVBQ3BCLFVBQW9CLEVBQ3BCLHFCQUE4QjtJQUU5QixNQUFNLFdBQVcsR0FBRyxNQUFNLENBQUMsZ0JBQWdCLENBQUMsT0FBTyxFQUFFLHFCQUFxQixDQUFDLENBQUM7SUFFNUUsT0FBTyxVQUFVLENBQUMsTUFBTSxDQUNwQixDQUFDLE1BQU0sRUFBRSxZQUFZLEVBQUUsRUFBRSxDQUFDLGlDQUNuQixNQUFNLEtBQ1QsQ0FBQyxZQUFZLENBQUMsRUFBRSxXQUFXLENBQUMsZ0JBQWdCLENBQUMsaURBQVMsQ0FBQyxZQUFZLENBQUMsQ0FBQyxJQUN2RSxFQUNGLEVBQUUsQ0FDTCxDQUFDO0FBQ04sQ0FBQyIsInNvdXJjZXMiOlsid2VicGFjazovL2NoZWNrb3V0Ly4vcGFja2FnZXMvZG9tLXV0aWxzL3NyYy9nZXRBcHBsaWVkU3R5bGVzLnRzPzdkNTQiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsga2ViYWJDYXNlIH0gZnJvbSAnbG9kYXNoJztcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gZ2V0QXBwbGllZFN0eWxlcyhcbiAgICBlbGVtZW50OiBIVE1MRWxlbWVudCxcbiAgICBwcm9wZXJ0aWVzOiBzdHJpbmdbXSxcbiAgICBwc2V1ZG9FbGVtZW50U2VsZWN0b3I/OiBzdHJpbmcsXG4pOiB7IFtrZXk6IHN0cmluZ106IHN0cmluZyB9IHtcbiAgICBjb25zdCBkZWNsYXJhdGlvbiA9IHdpbmRvdy5nZXRDb21wdXRlZFN0eWxlKGVsZW1lbnQsIHBzZXVkb0VsZW1lbnRTZWxlY3Rvcik7XG5cbiAgICByZXR1cm4gcHJvcGVydGllcy5yZWR1Y2UoXG4gICAgICAgIChyZXN1bHQsIHByb3BlcnR5TmFtZSkgPT4gKHtcbiAgICAgICAgICAgIC4uLnJlc3VsdCxcbiAgICAgICAgICAgIFtwcm9wZXJ0eU5hbWVdOiBkZWNsYXJhdGlvbi5nZXRQcm9wZXJ0eVZhbHVlKGtlYmFiQ2FzZShwcm9wZXJ0eU5hbWUpKSxcbiAgICAgICAgfSksXG4gICAgICAgIHt9LFxuICAgICk7XG59XG4iXSwibmFtZXMiOltdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./packages/dom-utils/src/getAppliedStyles.ts\n\n}");
+
+/***/ }),
+
 /***/ "./packages/instrument-utils/src/storedInstrument/CardInstrumentFieldset/CardInstrumentFieldset.tsx":
 /*!**********************************************************************************************************!*\
   !*** ./packages/instrument-utils/src/storedInstrument/CardInstrumentFieldset/CardInstrumentFieldset.tsx ***!
